@@ -5,7 +5,7 @@
 ** Login   <mathon_j@mathonj>
 **
 ** Started on  Fri Nov 29 20:55:14 2013 Jérémy MATHON
-** Last update Sun Dec  1 15:58:44 2013 Jérémy MATHON
+** Last update Sun Dec  1 18:49:13 2013 Jérémy MATHON
 */
 
 #include	<stdio.h>
@@ -30,16 +30,23 @@ void		my_put_in_tar(int x, int y)
     }
 }
 
-void		my_header(char *av, int x)
+int		my_header(char **av,int i, int x)
 {
   struct stat	header;
+  int		y;
 
-  stat(av, &header);
+  stat(av[i], &header);
   write(x, av, 100);
-  write(x, &header.st_mode, sizeof(header.st_mode));
-  write(x, &header.st_uid, sizeof(header.st_uid));
-  write(x, &header.st_size, sizeof(header.st_size));
-  write(x, &header.st_mtime, sizeof(header.st_mtime));
+  write(x, &header.st_mode, 8);
+  write(x, &header.st_uid, 8);
+  write(x, &header.st_size, 12);
+  write(x, &header.st_mtime, 12);
+  if ((y = open(av[i], O_RDONLY)) == -1)
+    {
+      perror("ERROR ");
+      exit(EXIT_FAILURE);
+    }
+  return (y);
 }
 
 int		my_archive(int ac, char **av)
@@ -48,26 +55,21 @@ int		my_archive(int ac, char **av)
   int		x;
   int		y;
 
-  i = 2;
+  i = 1;
   if ((av[1] == NULL) || (ac < 3))
     {
       printf("./my archive [File_archive] [File ... FileN]\n");
       return (0);
     }
   creat (av[1], S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-  while (av[i] != NULL)
+  if ((x = open(av[1], O_WRONLY)) == -1)
     {
-      if ((x = open(av[i], O_WRONLY)) == -1)
-	{
-	  perror("ERROR ");
-	  exit(EXIT_FAILURE);
-	}
-      if ((y = open(av[i], O_RDONLY)) == -1)
-	{
-	  perror("ERROR ");
-	  exit(EXIT_FAILURE);
-	}
-      my_header(av[i], x);
+      perror("ERROR ");
+      exit(EXIT_FAILURE);
+    }
+  while (av[++i] != 0)
+    {
+      y = my_header(av, i, x);
       my_put_in_tar(x, y);
     }
 }
