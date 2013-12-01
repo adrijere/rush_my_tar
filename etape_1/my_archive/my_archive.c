@@ -5,7 +5,7 @@
 ** Login   <mathon_j@mathonj>
 **
 ** Started on  Fri Nov 29 20:55:14 2013 Jérémy MATHON
-** Last update Sat Nov 30 18:05:47 2013 Jérémy MATHON
+** Last update Sun Dec  1 15:58:44 2013 Jérémy MATHON
 */
 
 #include	<stdio.h>
@@ -29,24 +29,31 @@ void		my_put_in_tar(int x, int y)
       my_put_in_tar(x, y);
     }
 }
+
 void		my_header(char *av, int x)
 {
   struct stat	header;
 
   stat(av, &header);
   write(x, av, 100);
-  write(x, &header.st_mode, 8);
+  write(x, &header.st_mode, sizeof(header.st_mode));
   write(x, &header.st_uid, sizeof(header.st_uid));
-  write(x, &header.st_size, 12);
-  write(x, &header.st_mtime, 12);
+  write(x, &header.st_size, sizeof(header.st_size));
+  write(x, &header.st_mtime, sizeof(header.st_mtime));
 }
 
-int		my_archive(char **av)
+int		my_archive(int ac, char **av)
 {
   int		i;
   int		x;
   int		y;
+
   i = 2;
+  if ((av[1] == NULL) || (ac < 3))
+    {
+      printf("./my archive [File_archive] [File ... FileN]\n");
+      return (0);
+    }
   creat (av[1], S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
   while (av[i] != NULL)
     {
@@ -67,5 +74,5 @@ int		my_archive(char **av)
 
 int	main(int ac, char **av)
 {
-  my_archive(av);
+  my_archive(ac, av);
 }

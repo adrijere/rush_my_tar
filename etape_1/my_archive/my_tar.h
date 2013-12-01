@@ -5,10 +5,10 @@
 ** Login   <mathon_j@epitech.net>
 ** 
 ** Started on  Sat Nov 30 14:29:17 2013 Jérémy MATHON
-** Last update Sat Nov 30 14:31:46 2013 Jérémy MATHON
+** Last update Sat Nov 30 18:39:01 2013 Jérémy MATHON
 */
 
-#ifndef MY_GET_NEXT_LINE_H_
-#define	MY_GET_NEXT_LINE_H_
-#define SIZE_BUFFER	2
+#ifndef MY_TAR_H_
+#define	MY_TAR_H_
+#define SIZE_BUFFER	512
 #endif /* MY_GET_NEXT_LINE_H_ */
